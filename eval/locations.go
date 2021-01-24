@@ -10,13 +10,13 @@ import (
 
 // LocationsResponse contains all data needed to verify the locations sheet.
 type LocationsResponse struct {
-	Create LocationRow `json:"create"` // first row
-	Update LocationRow `json:"update"` // second row
-	Get    LocationRow `json:"get"`    // third row
+	Create EvalRow `json:"create"` // first row
+	Update EvalRow `json:"update"` // second row
+	Get    EvalRow `json:"get"`    // third row
 }
 
-// LocationRow represents a row in the spreadsheet for location.
-type LocationRow struct {
+// EvalRow represents a row in the spreadsheet for evaluations.
+type EvalRow struct {
 	Code           int    `json:"code"`
 	License        string `json:"license"`
 	Id             int    `json:"id"`
@@ -70,10 +70,10 @@ func (e *EvalMetrc) Locations(license string) (LocationsResponse, error) {
 
 // CreateLocation creates a new location and returns its information.
 // It corresponds to Step 1 in the Locations tab of the Metrc Evaluation spreadsheet.
-func (e *EvalMetrc) CreateLocation(license string, name string) (LocationRow, error) {
+func (e *EvalMetrc) CreateLocation(license string, name string) (EvalRow, error) {
 	gotLocs, err := e.Metrc.GetLocationsActive(&license)
 	if err != nil {
-		return LocationRow{}, fmt.Errorf("could not initially get active: %s", err)
+		return EvalRow{}, fmt.Errorf("could not initially get active: %s", err)
 	}
 
 	// name := "Metrc Eval Location"
@@ -86,7 +86,7 @@ func (e *EvalMetrc) CreateLocation(license string, name string) (LocationRow, er
 
 	_, err = e.Metrc.CreateLocations(inputLocs, &license)
 	if err != nil {
-		return LocationRow{}, fmt.Errorf("could not create initial location: %s", err)
+		return EvalRow{}, fmt.Errorf("could not create initial location: %s", err)
 	}
 
 	gotLocs, err = e.Metrc.GetLocationsActive(&license)
@@ -101,7 +101,7 @@ func (e *EvalMetrc) CreateLocation(license string, name string) (LocationRow, er
 	}
 
 	if !foundLocName {
-		return LocationRow{}, fmt.Errorf("could not get loc with matching name: %s", err)
+		return EvalRow{}, fmt.Errorf("could not get loc with matching name: %s", err)
 	}
 
 	endpoint := "locations/v1/create"
@@ -110,11 +110,11 @@ func (e *EvalMetrc) CreateLocation(license string, name string) (LocationRow, er
 
 	resp, err := json.MarshalIndent(inputLocs, "", "\t")
 	if err != nil {
-		return LocationRow{}, fmt.Errorf("could not marshal input body")
+		return EvalRow{}, fmt.Errorf("could not marshal input body")
 	}
 	response := string(resp)
 
-	return LocationRow{
+	return EvalRow{
 		Code:           200,
 		License:        license,
 		Id:             locId,
@@ -126,7 +126,7 @@ func (e *EvalMetrc) CreateLocation(license string, name string) (LocationRow, er
 
 // UpdateLocationResponse displays the information to verify updating a location.
 // This corresponds to Step 2 in the Locations tab of the Metrc Evaluation spreadsheet.
-func (e *EvalMetrc) UpdateLocation(license string, name string, id int) (LocationRow, error) {
+func (e *EvalMetrc) UpdateLocation(license string, name string, id int) (EvalRow, error) {
 	// name := "Metrc Eval Location Updated"
 	updateLocs := []metrc.LocationPost{
 		{
@@ -138,7 +138,7 @@ func (e *EvalMetrc) UpdateLocation(license string, name string, id int) (Locatio
 
 	_, err := e.Metrc.UpdateLocations(updateLocs, &license)
 	if err != nil {
-		return LocationRow{}, fmt.Errorf("could not update locations: %s", err)
+		return EvalRow{}, fmt.Errorf("could not update locations: %s", err)
 	}
 
 	endpoint := "locations/v1/update"
@@ -146,11 +146,11 @@ func (e *EvalMetrc) UpdateLocation(license string, name string, id int) (Locatio
 	request := fmt.Sprintf("%s/%s%s", metrcUrl, endpoint, queryParam)
 	resp, err := json.MarshalIndent(updateLocs, "", "\t")
 	if err != nil {
-		return LocationRow{}, fmt.Errorf("could not marshal update body: %s", err)
+		return EvalRow{}, fmt.Errorf("could not marshal update body: %s", err)
 	}
 	response := string(resp)
 
-	return LocationRow{
+	return EvalRow{
 		Code:           200,
 		License:        license,
 		Id:             id,
@@ -162,10 +162,10 @@ func (e *EvalMetrc) UpdateLocation(license string, name string, id int) (Locatio
 
 // GetLocationResponse displays the information to verify getting the final location.
 // This corresponds to Step 3 in the Locations tab of the Metrc Evaluation spreadsheet.
-func (e *EvalMetrc) GetLocation(license string, name string, id int) (LocationRow, error) {
+func (e *EvalMetrc) GetLocation(license string, name string, id int) (EvalRow, error) {
 	gotLoc, err := e.Metrc.GetLocationsById(id, &license)
 	if err != nil {
-		return LocationRow{}, fmt.Errorf("could not get locs by id: %s", err)
+		return EvalRow{}, fmt.Errorf("could not get locs by id: %s", err)
 	}
 
 	endpoint := fmt.Sprintf("locations/v1/%d", id)
@@ -174,11 +174,11 @@ func (e *EvalMetrc) GetLocation(license string, name string, id int) (LocationRo
 
 	resp, err := json.MarshalIndent(gotLoc, "", "\t")
 	if err != nil {
-		return LocationRow{}, fmt.Errorf("could not marshal got resp body: %s", err)
+		return EvalRow{}, fmt.Errorf("could not marshal got resp body: %s", err)
 	}
 	response := string(resp)
 
-	return LocationRow{
+	return EvalRow{
 		Code:           200,
 		License:        license,
 		Id:             id,
