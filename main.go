@@ -16,4 +16,11 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("%#v\n", lr)
+
+	// Call Strains endpoints
+	sr, err := e.Strains(licenseNumber)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%#v\n", sr)
 }
