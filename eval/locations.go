@@ -27,7 +27,7 @@ type EvalRow struct {
 
 // Locations generates all data needed to verify the locations sheet.
 func (e *EvalMetrc) Locations(license string) (LocationsResponse, error) {
-	ts := time.Now().Format("2021.01.01 12:00:00")
+	ts := time.Now().Format(timeLayoutFmt)
 	createName := fmt.Sprintf("Metrc Eval Location %s", ts)
 	updateName := fmt.Sprintf("Metric Eval Location %s Updated", ts)
 
@@ -124,7 +124,7 @@ func (e *EvalMetrc) CreateLocation(license string, name string) (EvalRow, error)
 	}, nil
 }
 
-// UpdateLocationResponse displays the information to verify updating a location.
+// UpdateLocation displays the information to verify updating a location.
 // This corresponds to Step 2 in the Locations tab of the Metrc Evaluation spreadsheet.
 func (e *EvalMetrc) UpdateLocation(license string, name string, id int) (EvalRow, error) {
 	// name := "Metrc Eval Location Updated"
@@ -160,7 +160,7 @@ func (e *EvalMetrc) UpdateLocation(license string, name string, id int) (EvalRow
 	}, nil
 }
 
-// GetLocationResponse displays the information to verify getting the final location.
+// GetLocation displays the information to verify getting the final location.
 // This corresponds to Step 3 in the Locations tab of the Metrc Evaluation spreadsheet.
 func (e *EvalMetrc) GetLocation(license string, name string, id int) (EvalRow, error) {
 	gotLoc, err := e.Metrc.GetLocationsById(id, &license)

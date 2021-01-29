@@ -15,7 +15,7 @@ type StrainsResponse struct {
 }
 
 func (e *EvalMetrc) Strains(license string) (StrainsResponse, error) {
-	ts := time.Now().Format("2021.01.01 12:00:00")
+	ts := time.Now().Format(timeLayoutFmt)
 	name := fmt.Sprintf("Metrc Strain Name %s", ts)
 
 	cs, err := e.CreateStrain(license, name)

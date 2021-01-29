@@ -23,4 +23,11 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("%#v\n", sr)
+
+	// Call Items endpoints
+	ir, err := e.Items(licenseNumber)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%#v\n", ir)
 }

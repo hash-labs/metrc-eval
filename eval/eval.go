@@ -4,6 +4,8 @@ import "github.com/hash-labs/metrc"
 
 var metrcUrl string = "https://sandbox-api-ca.metrc.com" // TODO: Make configurable.
 
+var timeLayoutFmt string = "2006-01-02 15:04:05"
+
 // EvalMetrc wraps a Metrc interface, so our scripted functions can easily call Metrc.
 type EvalMetrc struct {
 	Metrc metrc.MetrcInterface
